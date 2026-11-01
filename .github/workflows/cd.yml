@@ -4,10 +4,16 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
 jobs:
   push_to_registry:
     name: Push Docker image to ECR
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.build.outputs.image_tag }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -21,11 +27,52 @@ jobs:
           VERSION=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)
           SHA=$(git rev-parse --short HEAD)
           IMAGE=244530008913.dkr.ecr.eu-west-1.amazonaws.com/crud-dud-exam-2026
+          TAG=$VERSION-$SHA
           
           docker build -t wishapp .
 
-          docker tag wishapp:latest $IMAGE:$VERSION-$SHA
-          docker push $IMAGE:$VERSION-$SHA
+          docker tag wishapp:latest $IMAGE:$TAG
+          docker push $IMAGE:$TAG
 
           docker tag wishapp:latest $IMAGE:latest
           docker push $IMAGE:latest
+
+          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
+  
+  terraform:
+    name: Deploy with terraform
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          
+      - name: Init
+        run: terraform init -input=false
+
+      - name: Validate
+        run: terraform validate
+
+      - name: Apply
+        run: terraform apply -auto-approve -input=false
+
+      - name: Show URL
+        run: terraform output url
