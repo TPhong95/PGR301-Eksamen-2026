@@ -6,6 +6,7 @@ public record AnalyzeResponse(
     String s3Key,
     List<String> labels,
     String roomAnalysis,
+    String roomCategory,
     String recipientProfile,
     List<GiftSuggestion> suggestions,
     String timestamp) {}

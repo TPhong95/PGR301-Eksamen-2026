@@ -74,10 +74,11 @@ public class WishlistService {
         s3Key,
         labels,
         analysis.roomAnalysis(),
+        analysis.roomCategory(),
         analysis.recipientProfile(),
         analysis.suggestions(),
         Instant.now().toString());
-  }
+    }
 
   private void recordRoomCategory(String roomCategory) {
     String category = normalize(roomCategory, KNOWN_ROOMS);
