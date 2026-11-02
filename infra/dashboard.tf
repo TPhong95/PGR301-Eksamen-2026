@@ -18,7 +18,7 @@ resource "aws_cloudwatch_dashboard" "app" {
           stat    = "Sum"
           period  = 300
           metrics = [
-            [{ expression = "SEARCH('{${var.metrics_namespace},category} MetricName=\"wishapp.rooms.analyzed\"', 'Sum', 300)", id = "e1" }],
+            [{ expression = "SEARCH('{${var.metrics_namespace},category} MetricName=\"wishapp.rooms.analyzed.count\"', 'Sum', 300)", id = "e1" }],
           ]
         }
       },
@@ -30,13 +30,13 @@ resource "aws_cloudwatch_dashboard" "app" {
         height = 6
         properties = {
           title   = "Gift suggestions per category"
-          view    = "bar"
+          view    = "timeSeries"
           stacked = false
           region  = var.region
           stat    = "Sum"
           period  = 300
           metrics = [
-            [{ expression = "SEARCH('{${var.metrics_namespace},category} MetricName=\"wishapp.gifts.suggested\"', 'Sum', 300)", id = "e2" }],
+            [{ expression = "SEARCH('{${var.metrics_namespace},category} MetricName=\"wishapp.gifts.suggested.count\"', 'Sum', 300)", id = "e2" }],
           ]
         }
       },
@@ -139,23 +139,6 @@ resource "aws_cloudwatch_dashboard" "app" {
           ]
         }
       },
-      {
-        type   = "metric"
-        x      = 12
-        y      = 24
-        width  = 12
-        height = 6
-        properties = {
-          title  = "ECS running tasks"
-          view   = "timeSeries"
-          region = var.region
-          period = 60
-          stat   = "Average"
-          metrics = [
-            ["ECS/ContainerInsights", "RunningTaskCount", "ClusterName", var.ecs_cluster_name, "ServiceName", var.ecs_service_name],
-          ]
-        }
-      },
 
       # ---------- JVM ----------
       {
@@ -170,8 +153,8 @@ resource "aws_cloudwatch_dashboard" "app" {
           region = var.region
           period = 60
           metrics = [
-            [var.metrics_namespace, "jvm.memory.used", "area", "heap", { stat = "Average", label = "heap used" }],
-            [var.metrics_namespace, "jvm.gc.pause", { stat = "Maximum", label = "GC pause max" }],
+            [var.metrics_namespace, "jvm.memory.used.value", "area", "heap", "id", "G1 Old Gen", { label = "heap used (old gen)" }],
+            [var.metrics_namespace, "jvm.memory.max.value", "area", "heap", "id", "G1 Old Gen", { label = "heap max (old gen)" }],
           ]
         }
       },
