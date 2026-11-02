@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and push Docker image
+        id: build
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -77,7 +78,4 @@ jobs:
         run: terraform apply -auto-approve -input=false
 
       - name: Show URL
-        run: terraform output url
-      
-      - name: Show image tag
-        run: echo "Deploying image tag: $TF_VAR_image_tag"
+        run: terraform output
