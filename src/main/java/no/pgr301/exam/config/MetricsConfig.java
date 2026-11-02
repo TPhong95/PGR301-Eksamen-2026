@@ -28,7 +28,7 @@ public class MetricsConfig {
 
       @Override
       public String namespace() {
-        return "";
+        return "wishapp-37";
       }
 
       @Override

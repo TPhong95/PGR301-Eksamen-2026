@@ -1,6 +1,10 @@
 package no.pgr301.exam.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,11 +27,38 @@ public class BedrockService {
 
   private final BedrockRuntimeClient client;
   private final String modelId;
+  private final Timer callTimer;
+  private final DistributionSummary inputTokens;
+  private final DistributionSummary outputTokens;
+  private final Counter totalTokens;
 
   public BedrockService(
-      BedrockRuntimeClient client, @Value("${app.bedrock.model-id}") String modelId) {
+      BedrockRuntimeClient client,
+      @Value("${app.bedrock.model-id}") String modelId,
+      MeterRegistry registry) {
     this.client = client;
     this.modelId = modelId;
+    this.callTimer =
+        Timer.builder("wishapp.bedrock.duration")
+            .description("Time spent in Bedrock converse with model")
+            .tag("model", modelId)
+            .register(registry);
+
+    this.inputTokens =
+        DistributionSummary.builder("wishapp.bedrock.tokens.input")
+            .description("Input tokens per Bedrock Converse call")
+            .tag("model", modelId)
+            .register(registry);
+    this.outputTokens =
+        DistributionSummary.builder("wishapp.bedrock.tokens.output")
+            .description("Output tokens per Bedrock Converse call")
+            .tag("model", modelId)
+            .register(registry);
+    this.totalTokens =
+        Counter.builder("wishapp.bedrock.tokens.total")
+            .description("Total Bedrock tokens (input + output)")
+            .tag("model", modelId)
+            .register(registry);
   }
 
   /**
@@ -80,24 +111,32 @@ public class BedrockService {
                 Svar KUN med gyldig JSON på dette formatet:
                 {
                   "roomAnalysis": "kort beskrivelse av rommet og hva det signaliserer",
+                  "roomCategory": "Velg én av: stue, kjøkken, soverom, barnerom, garasje, kontor, bad, ukjent",
                   "recipientProfile": "antagelser om personen (alder, interesser, livssituasjon)",
                   "suggestions": [
-                    {"gift": "konkret gaveforslag", "reasoning": "hvorfor denne gaven passer basert på profilen"}
+                    {"gift": "konkret gaveforslag",
+                    "giftCategory": "Velg én av: leketøy, bøker, klær, sport, hjem, kjøkken, elektronikk, hobby, skjønnhet, mat-og-drikke, reise, kunst-og-design, dyr, ukjent",
+                    "reasoning": "hvorfor denne gaven passer basert på profilen"}
                   ]
                 }
                 """
             .formatted(String.join(", ", labels));
 
     ConverseResponse resp =
-        client.converse(
-            ConverseRequest.builder()
-                .modelId(modelId)
-                .messages(
-                    Message.builder()
-                        .role(ConversationRole.USER)
-                        .content(ContentBlock.fromText(prompt))
-                        .build())
-                .build());
+        callTimer.record(
+            () ->
+                client.converse(
+                    ConverseRequest.builder()
+                        .modelId(modelId)
+                        .messages(
+                            Message.builder()
+                                .role(ConversationRole.USER)
+                                .content(ContentBlock.fromText(prompt))
+                                .build())
+                        .build()));
+    inputTokens.record(resp.usage().inputTokens());
+    outputTokens.record(resp.usage().outputTokens());
+    totalTokens.increment(resp.usage().totalTokens());
 
     String text = resp.output().message().content().get(0).text();
     return parseAnalysis(text);
@@ -111,8 +150,9 @@ public class BedrockService {
     } catch (Exception e) {
       return new GiftAnalysis(
           "(ukjent)",
+          "(ukjent)",
           "(kunne ikke parse svar)",
-          List.of(new GiftSuggestion("(ukjent format)", text)));
+          List.of(new GiftSuggestion("(ukjent format)", "(ukjent)", text)));
     }
   }
 }

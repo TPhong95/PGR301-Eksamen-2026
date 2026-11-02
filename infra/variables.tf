@@ -32,3 +32,29 @@ variable "bucket_name" {
   description = "Name of the S3 bucket the app uses"
   type        = string
 }
+
+variable "metrics_namespace" {
+  description = "Namespace of MetricsConfig"
+  type        = string
+}
+
+variable "ecs_cluster_name" {
+  description = "Name of cluster"
+  type        = string
+}
+
+variable "ecs_service_name" {
+  description = "Name of ecs service"
+  type        = string
+}
+
+variable "bedrock_model" {
+  description = "Bedrock model ID, must match app.bedrock.model-id"
+  type        = string
+}
+
+variable "daily_token_limit" {
+  description = "Total Bedrock tokens per day that triggers the alarm"
+  type        = number
+  default     = 100000
+}

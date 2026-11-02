@@ -45,6 +45,12 @@ data "aws_iam_policy_document" "task_permissions" {
     actions   = ["s3:ListBucket"]
     resources = [aws_s3_bucket.images.arn]
   }
+
+  statement {
+    sid       = "CloudWatchMetrics"
+    actions   = ["cloudwatch:PutMetricData"]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "task_role" {
