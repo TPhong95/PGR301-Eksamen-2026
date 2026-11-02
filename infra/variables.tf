@@ -16,11 +16,13 @@ variable "kandidatnummer" {
 variable "image_tag" {
   description = "Tag of the image in ECR to deploy, e.g. 1.0.0-a1b2c3d"
   type        = string
+  default     = "latest"
 }
 
 variable "image_location" {
   description = "location of the image"
   type        = string
+  default     = "244530008913.dkr.ecr.eu-west-1.amazonaws.com/crud-dud-exam-2026"
 }
 
 variable "execution_role_name" {
