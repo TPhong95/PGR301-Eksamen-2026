@@ -3,7 +3,7 @@ resource "aws_cloudwatch_dashboard" "app" {
 
   dashboard_body = jsonencode({
     widgets = [
-      # ---------- Business ----------
+      # CATEGORY TRACKERS
       {
         type   = "metric"
         x      = 0
@@ -41,7 +41,7 @@ resource "aws_cloudwatch_dashboard" "app" {
         }
       },
 
-      # ---------- Business + latency ----------
+      # DURATION FOR CALLS
       {
         type   = "metric"
         x      = 0
@@ -60,6 +60,8 @@ resource "aws_cloudwatch_dashboard" "app" {
           ]
         }
       },
+
+      # SUGGESTIONS PER REQUEST
       {
         type   = "metric"
         x      = 12
@@ -77,7 +79,7 @@ resource "aws_cloudwatch_dashboard" "app" {
         }
       },
 
-      # ---------- Bedrock token usage ----------
+      # TOKEN USAGE
       {
         type   = "metric"
         x      = 0
@@ -136,7 +138,7 @@ resource "aws_cloudwatch_dashboard" "app" {
         }
       },
 
-      # ---------- Infrastructure (ECS) ----------
+      # INFRASTRUCTURE
       {
         type   = "metric"
         x      = 0
@@ -173,7 +175,7 @@ resource "aws_cloudwatch_dashboard" "app" {
         }
       },
 
-      # ---------- Application (Micrometer / Actuator) ----------
+      # MEMORY AND GARBAGE COLLECTION
       {
         type   = "metric"
         x      = 0
@@ -195,6 +197,8 @@ resource "aws_cloudwatch_dashboard" "app" {
   })
 }
 
+#ALARMS
+#ALARM FOR SLOW CALLS
 resource "aws_cloudwatch_metric_alarm" "bedrock_slow" {
   alarm_name          = "wishapp-${var.kandidatnummer}-bedrock-slow"
   alarm_description   = "Average Bedrock converse call over 10 seconds for 1 minutes"
@@ -212,6 +216,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_slow" {
   }
 }
 
+#ALARM FOR HIGH DAILY TOKEN USAGE
 resource "aws_cloudwatch_metric_alarm" "tokens_daily_high" {
   alarm_name          = "wishapp-${var.kandidatnummer}-tokens-daily-high"
   alarm_description   = "Total Bedrock tokens over ${var.daily_token_limit} in one day"

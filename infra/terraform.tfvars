@@ -6,13 +6,13 @@ kandidatnummer = "37"
 
 image_tag = "latest"
 
-image_location = "244530008913.dkr.ecr.eu-west-1.amazonaws.com/crud-dud-exam-2026:"
+image_location = "244530008913.dkr.ecr.eu-west-1.amazonaws.com/crud-dud-exam-2026"
 
 execution_role_name = "ecsTaskExecutionRole"
 
 bucket_name = "crud-dud-37-exam2026"
 
-metrics_namespace = "wishapp-37"
+metrics_namespace = "wishapp"
 
 ecs_cluster_name = "default"
 

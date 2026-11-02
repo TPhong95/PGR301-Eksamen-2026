@@ -5,24 +5,6 @@ on:
     branches: [ main ]
 
 jobs:
-#  build-and-test:
-#    name: Build and Test
-#    runs-on: ubuntu-latest
-
-#    steps:
-#      - name: Check out code
-#        uses: actions/checkout@v4
-#
-#      - name: Sett up JDK 21
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: temurin
-#          java-version: '21'
-#          cache: maven
-      
-#      - name: Build and test
-#        run: mvn -B verify
-
   style-check:
     name: Style check
     runs-on: ubuntu-latest
