@@ -78,7 +78,7 @@ public class WishlistService {
         analysis.recipientProfile(),
         analysis.suggestions(),
         Instant.now().toString());
-    }
+  }
 
   private void recordRoomCategory(String roomCategory) {
     String category = normalize(roomCategory, KNOWN_ROOMS);
