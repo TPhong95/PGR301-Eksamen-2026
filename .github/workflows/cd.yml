@@ -78,3 +78,6 @@ jobs:
 
       - name: Show URL
         run: terraform output url
+
+      - name: Show image tag
+        run: echo "Deploying image tag: $TF_VAR_image_tag"
