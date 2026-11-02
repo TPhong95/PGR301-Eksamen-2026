@@ -106,6 +106,15 @@ public class WishlistService {
     if (!allowed.contains(v)) {
       return "ukjent";
     }
-    return v;
+    return toAscii(v);
+  }
+
+  // CloudWatch rejects non-ASCII dimension values, so "leketøy" becomes "leketoy".
+  private static String toAscii(String s) {
+    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+        .replaceAll("\\p{M}", "")
+        .replace("ø", "o")
+        .replace("æ", "ae")
+        .replace("å", "a");
   }
 }
