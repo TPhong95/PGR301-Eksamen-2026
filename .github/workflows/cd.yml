@@ -43,6 +43,8 @@ jobs:
     name: Deploy with terraform
     needs: push_to_registry
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_image_tag: ${{ needs.push_to_registry.outputs.image_tag }}
     defaults:
       run:
         working-directory: infra
