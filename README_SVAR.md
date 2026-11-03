@@ -10,8 +10,8 @@ docker run -p 9999:8080 wishapp
 ```
 ### 1B CI-pipeline:
 CD workflow nyeste:
-![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/cd.yml)\
-CI workflow nyeste: ![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/ci.yml)\
+![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/cd.yml/badge.svg)\
+CI workflow nyeste: ![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/ci.yml/badge.svg)\
 
 CI oppgave 1B:
 https://github.com/TPhong95/PGR301-Eksamen-2026/actions/runs/41337500204 \
@@ -32,7 +32,7 @@ https://37-a2f376e5a9a241a4959673ef730535a0.ecs.eu-west-1.on.aws/
 Jeg har valgt kandidat nøkkelen min som nøkkel, siden det er unikt mellom meg og mine medelever. Jeg kunne ha vært ekstra forsiktig og lagt til noe ekstra etter nummeret mitt i tilfelle noen hadde skrive feil men, men ser ikke det som nødvendig.
 
 ### 2C GitHub Actions-job for Terraform:
-![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/cd.yml)\
+![alt text goes here](https://github.com/TPhong95/PGR301-Eksamen-2026/actions/workflows/cd.yml/badge.svg)\
 https://github.com/TPhong95/PGR301-Eksamen-2026/actions/runs/41545303538 
 
 Terraform er avhengig av at imaget finnes i registret i ECR, i tillegg så er den workflowen min avhengig av at den får image tag navnet fra container-build etter at den er ferdig med jobben sin. Og vi vil helst at terraformen skal bruke den nyeste imaget vi har laget siden når vi gjør en push så er det vanligvis noe nytt i koden.
