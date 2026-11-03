@@ -25,11 +25,6 @@ variable "image_location" {
   default     = "244530008913.dkr.ecr.eu-west-1.amazonaws.com/crud-dud-exam-2026"
 }
 
-variable "execution_role_name" {
-  description = "Name of the premade ECS task execution role"
-  type        = string
-}
-
 variable "bucket_name" {
   description = "Name of the S3 bucket the app uses"
   type        = string

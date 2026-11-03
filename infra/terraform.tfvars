@@ -4,8 +4,6 @@ account_id = "244530008913"
 
 kandidatnummer = "37"
 
-execution_role_name = "ecsTaskExecutionRole"
-
 bucket_name = "crud-dud-37-exam2026"
 
 metrics_namespace = "wishapp"
